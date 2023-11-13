@@ -1,11 +1,11 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 import pandas as pd
 
 # Load the data
-df = pd.read_csv(f'data/imdb_anime_enhanced.csv')
+df = pd.read_csv(f'D:\\Documentos\\Portifolio\\anime_analysis\\src\\data\\imdb_anime_enhanced.csv')
 
 # Starting Dash app
 app = dash.Dash(__name__)
@@ -25,7 +25,7 @@ app.layout = html.Div(children=[
         value=[df['Init_year'].min(), df['Init_year'].max()]
     ),
 
-    html.Label('Filtrar por User Rating:'),
+    html.Label('User Rating Filter:'),
     dcc.RangeSlider(
         id='user-rating-slider',
         min=df['User Rating'].min(),
@@ -59,9 +59,9 @@ app.layout = html.Div(children=[
 def update_table(year_production_range, user_rating_range, selected_genre):
     # Apply filters
     filtered_df = df[
-        (df['Ano Producao'] >= year_production_range[0]) & (df['Ano Producao'] <= year_production_range[1]) &
+        (df['Init_year'] >= year_production_range[0]) & (df['Init_year'] <= year_production_range[1]) &
         (df['User Rating'] >= user_rating_range[0]) & (df['User Rating'] <= user_rating_range[1]) &
-        (df['Gênero'].isin(selected_genre) if selected_genre else True)
+        (df['Genre'].isin(selected_genre) if selected_genre else True)
     ]
 
     # Create HTML table
