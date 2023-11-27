@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 
 def graphics_page():
@@ -31,8 +32,25 @@ def graphics_page():
                     marginal='histogram',
                     title='User Rating by Init_year Histogram.',
                     labels={'User Rating': 'User Rating', 'Init_year': 'Init_year'})
+    
+    # Calculate total gross
+    total_gross = df_filtered['Gross'].sum()
+    
+    # Plot indicators
+    ind1 = go.Figure()
+
+    ind1.add_trace(
+        go.Indicator(
+            mode='number',
+            value=total_gross,
+            title='Total earnings',
+            number={'prefix': 'US$'}
+        )
+    )
 
     # Render graphics
+    st.plotly_chart(ind1)
+
     col1, col2 = st.columns(2)
     col1.plotly_chart(fig_scatter, use_container_width=True)
     col2.plotly_chart(fig_histogram, use_container_width=True)
