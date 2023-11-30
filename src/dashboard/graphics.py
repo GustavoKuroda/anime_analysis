@@ -35,6 +35,25 @@ def graphics():
     # Calculate total gross
     total_gross = df_filtered['Gross'].sum()
     mean_rating = df_filtered['User Rating'].mean()
+
+    # Calculate mean and standard deviation for each year
+    '''mean_std_data = filtered.groupby('Init')['User Rating'].agg(['mean', 'std']).reset_index()
+
+    time_series = px.line(mean_std_data, x='Init', y='mean', title='User Rating evolution over the years.',
+                labels={'Init': 'Init Year', 'User Rating': 'User Rating'},
+                line_shape='linear', markers=True)
+
+    # Adding error bars to the figure
+    for index, row in mean_std_data.iterrows():
+        year = row['Init']
+        mean_value = row['mean']
+        std_value = row['std']
+
+        time_series.add_traces(go.Scatter(x=[year], y=[mean_value],
+                        mode='markers',
+                        error_y=dict(type='data', array=[std_value], visible=True),
+                        marker=dict(color='red'),
+                        showlegend=False))'''
     
     # Indicators
     ind1 = go.Figure()
