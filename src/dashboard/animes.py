@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-def initial_page():
+def animes():
     # Loading dataset
     df = pd.read_csv(f'src/data/imdb_anime_enhanced.csv')
 

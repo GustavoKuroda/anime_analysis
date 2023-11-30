@@ -3,7 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 
-def graphics_page():
+def graphics():
     # Loading dataset
     df = pd.read_csv(f'src/data/imdb_anime_enhanced.csv')
 
@@ -21,24 +21,23 @@ def graphics_page():
                     ((df['Ongoing'] == 'Yes') if ongoing_filter == 'Yes' else (df['Ongoing'] == 'No') if ongoing_filter == 'No' else True)]
 
     # Creating graphics using Plotly
-    fig_scatter = px.scatter(df_filtered, x='Init_year', 
-                    y='User Rating', color='Genre', 
-                    hover_data=['Title'], 
+    fig_scatter = px.scatter(df_filtered, x='Init_year',
+                    y='User Rating', color='Genre',
+                    hover_data=['Title'],
                     title='User rating by Init_year and Genre Scatter.')
 
     fig_histogram = px.histogram(df_filtered, x='User Rating', 
                     nbins=int(1 + 10 * (df_filtered['User Rating'].max() - df_filtered['User Rating'].min())),
                     color='Init_year',
-                    marginal='histogram',
                     title='User Rating by Init_year Histogram.',
                     labels={'User Rating': 'User Rating', 'Init_year': 'Init_year'})
     
     # Calculate total gross
     total_gross = df_filtered['Gross'].sum()
+    mean_rating = df_filtered['User Rating'].mean()
     
-    # Plot indicators
+    # Indicators
     ind1 = go.Figure()
-
     ind1.add_trace(
         go.Indicator(
             mode='number',
@@ -48,9 +47,20 @@ def graphics_page():
         )
     )
 
-    # Render graphics
-    st.plotly_chart(ind1)
+    ind2 = go.Figure()
+    ind2.add_trace(
+        go.Indicator(
+            mode='number',
+            value=mean_rating,
+            title='Mean User Rating',
+        )
+    )
 
+    # Render graphics
     col1, col2 = st.columns(2)
-    col1.plotly_chart(fig_scatter, use_container_width=True)
-    col2.plotly_chart(fig_histogram, use_container_width=True)
+    col1.plotly_chart(ind1)
+    col2.plotly_chart(ind2)
+
+    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_histogram, use_container_width=True)
+

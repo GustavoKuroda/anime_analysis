@@ -1,6 +1,7 @@
 import streamlit as st
-from initial_page import initial_page
-from graphics_page import graphics_page
+from animes import animes
+from graphics import graphics
+from home import home
 
 def main():
     # Set Wide Mode as Default
@@ -8,8 +9,9 @@ def main():
 
     # List of pages
     pages = {
-        "Table": initial_page,
-        "Graphics": graphics_page
+        "Home": home,
+        "Animes": animes,
+        "Graphics": graphics
     }
 
     # Select page and call
