@@ -11,39 +11,40 @@ def graphics():
     st.title('Graphics')
 
     # Interactive filters
-    year_filter = st.slider('Filter by Year:', int(df['Init_year'].min()), int(df['Init_year'].max()), (int(df['Init_year'].min()), int(df['Init_year'].max())))
+    year_filter = st.slider('Filter by Year:', int(df['Init'].min()), int(df['Init'].max()), (int(df['Init'].min()), int(df['Init'].max())))
     genre_filter = st.multiselect('Filter by Genre:', ['All'] + list(df['Genre'].unique()), default=['All'])
     ongoing_filter = st.selectbox('Filter by Ongoing:', ['All', 'Yes', 'No'])
 
     # Apply filters
-    df_filtered = df[(df['Init_year'].between(year_filter[0], year_filter[1])) & 
+    df_filtered = df[(df['Init'].between(year_filter[0], year_filter[1])) & 
                     (df['Genre'].isin(genre_filter) if 'All' not in genre_filter else True) & 
                     ((df['Ongoing'] == 'Yes') if ongoing_filter == 'Yes' else (df['Ongoing'] == 'No') if ongoing_filter == 'No' else True)]
-
-    # Creating graphics using Plotly
-    fig_scatter = px.scatter(df_filtered, x='Init_year',
-                    y='User Rating', color='Genre',
-                    hover_data=['Title'],
-                    title='User rating by Init_year and Genre Scatter.')
-
-    fig_histogram = px.histogram(df_filtered, x='User Rating', 
-                    nbins=int(1 + 10 * (df_filtered['User Rating'].max() - df_filtered['User Rating'].min())),
-                    color='Init_year',
-                    title='User Rating by Init_year Histogram.',
-                    labels={'User Rating': 'User Rating', 'Init_year': 'Init_year'})
     
-    # Calculate total gross
+    # Calculate total gross and mean rating, with filtered dataframe
     total_gross = df_filtered['Gross'].sum()
     mean_rating = df_filtered['User Rating'].mean()
 
-    # Calculate mean and standard deviation for each year
-    '''mean_std_data = filtered.groupby('Init')['User Rating'].agg(['mean', 'std']).reset_index()
+    # Calculate mean and standard deviation of User Rating for each year, without filtered dataframe
+    mean_std_data = df.groupby('Init')['User Rating'].agg(['mean', 'std']).reset_index()
 
-    time_series = px.line(mean_std_data, x='Init', y='mean', title='User Rating evolution over the years.',
-                labels={'Init': 'Init Year', 'User Rating': 'User Rating'},
-                line_shape='linear', markers=True)
+    # Creating graphics using Plotly
+    hist1 = px.histogram(df_filtered, x='User Rating', 
+                    nbins=int(1 + 10 * (df_filtered['User Rating'].max() - df_filtered['User Rating'].min())),
+                    color='Init',
+                    title='User Rating by Initial Year Histogram.',
+                    labels={'User Rating': 'User Rating', 'Init': 'Init Year'})
 
-    # Adding error bars to the figure
+    hist2 = px.histogram(df_filtered, x='Init',
+                        nbins=70,
+                        color='User Rating',
+                        title='Animes released over the years.',
+                        labels={'User Rating': 'User Rating', 'Init': 'Init Year'})
+    
+    time_series = px.line(mean_std_data, x='Init', y='mean', title='User Rating evolution.',
+                        labels={'Init': 'Init Year', 'User Rating': 'User Rating'},
+                        line_shape='linear', markers=True)
+
+    # Adding error bars to time_series
     for index, row in mean_std_data.iterrows():
         year = row['Init']
         mean_value = row['mean']
@@ -53,7 +54,7 @@ def graphics():
                         mode='markers',
                         error_y=dict(type='data', array=[std_value], visible=True),
                         marker=dict(color='red'),
-                        showlegend=False))'''
+                        showlegend=False))
     
     # Indicators
     ind1 = go.Figure()
@@ -75,11 +76,12 @@ def graphics():
         )
     )
 
-    # Render graphics
+    # Render indicators
     col1, col2 = st.columns(2)
-    col1.plotly_chart(ind1)
-    col2.plotly_chart(ind2)
+    col1.plotly_chart(ind1, use_container_width=True)
+    col2.plotly_chart(ind2, use_container_width=True)
 
-    st.plotly_chart(fig_scatter, use_container_width=True)
-    st.plotly_chart(fig_histogram, use_container_width=True)
-
+    # Render graphics
+    st.plotly_chart(hist1, use_container_width=True)
+    st.plotly_chart(hist2, use_container_width=True)
+    st.plotly_chart(time_series, use_container_width=True)
