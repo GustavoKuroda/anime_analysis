@@ -12,7 +12,7 @@ def home():
     st.write('### This web app:')
     st.write('Gathers a table, presented at "Animes" page, with some ' +
             'relevant information such as Title, Genre, User Rating, ' +
-            'Init Year, Gross and Ongoing. The "Graphics" page introduce ' +
+            'Initial Year, Gross and Ongoing status. The "Graphics" page introduce ' +
             'some graphics to data visualization. At both pages the ' +
             'data can be filtered by key parameters.')
     st.write('### Data set reference:')
